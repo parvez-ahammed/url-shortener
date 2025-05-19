@@ -8,7 +8,7 @@ namespace url_shortener.Profiles
 
         public ShortUrlMappingProfile()
         {
-            CreateMap<ShortUrl, ShortUrlDTO>()
+            CreateMap<ShortUrl, ShortUrlResponse>()
             .ForMember(dest => dest.ShortUrl,
                        opt => opt.MapFrom((src, _, __, context) =>
                            $"{context.Items["domain"]}/{src.ShortCode}"));

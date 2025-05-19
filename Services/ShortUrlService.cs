@@ -14,7 +14,7 @@ namespace url_shortener.Services
             _repository = repository;
         }
 
-        public ShortUrlDTO CreateShortUrl([FromBody] CreateShortUrlRequestDTO request)
+        public ShortUrlResponse CreateShortUrl([FromBody] CreateShortUrlRequest request)
         {
             var shortCode = Guid.NewGuid().ToString("N")[..6];
             var shortUrl = new ShortUrl
@@ -25,7 +25,7 @@ namespace url_shortener.Services
 
             var newShortUrl = _repository.Create(shortUrl);
 
-            var data = new ShortUrlDTO
+            var data = new ShortUrlResponse
             {
                 OriginalUrl = newShortUrl.OriginalUrl,
                 ShortCode = newShortUrl.ShortCode,

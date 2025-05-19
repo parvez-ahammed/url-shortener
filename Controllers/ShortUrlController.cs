@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using url_shortener.DTOs;
-using url_shortener.Models;
 using url_shortener.Services;
 
 namespace url_shortener.Controllers
@@ -18,7 +17,7 @@ namespace url_shortener.Controllers
 
         // POST api/shorturl
         [HttpPost]
-        public ActionResult<ShortUrlDTO> Create([FromBody] CreateShortUrlRequestDTO request)
+        public ActionResult<ShortUrlResponse> Create([FromBody] CreateShortUrlRequest request)
         {
             if (!Uri.IsWellFormedUriString(request.OriginalUrl, UriKind.Absolute))
                 return BadRequest("Invalid URL");
@@ -30,7 +29,7 @@ namespace url_shortener.Controllers
 
         // GET: api/shorturl
         [HttpGet]
-        public ActionResult<IEnumerable<ShortUrl>> GetAll()
+        public ActionResult<IEnumerable<ShortUrlResponse>> GetAll()
         {
             var data = _shortUrlService.GetAll();
 
@@ -53,9 +52,13 @@ namespace url_shortener.Controllers
 
 
         [HttpPut("{shortcode}")]
-        public IActionResult Update(string shortcode, [FromBody] string newOriginalUrl)
+        public ActionResult Update(string shortcode, [FromBody] UpdateShortUrlRequest request)
+
         {
-            var updated = _shortUrlService.UpdateOriginalUrl(shortcode, newOriginalUrl);
+            if (!Uri.IsWellFormedUriString(request.NewOriginalUrl, UriKind.Absolute))
+                return BadRequest("Invalid URL");
+
+            var updated = _shortUrlService.UpdateOriginalUrl(shortcode, request.NewOriginalUrl);
 
             if (!updated)
                 return NotFound("Short URL not found.");
@@ -64,7 +67,7 @@ namespace url_shortener.Controllers
         }
 
         [HttpDelete("{shortcode}")]
-        public IActionResult Delete(string shortcode)
+        public ActionResult Delete(string shortcode)
         {
             var deleted = _shortUrlService.DeleteShortUrl(shortcode);
 
